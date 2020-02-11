@@ -1,18 +1,18 @@
-/*                  DentalClinic
+ï»¿/*                  DentalClinic
 This program is created for easy dental managment.
-
 */
 
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <locale>
 #include <windows.h>
 using namespace std;
 
 class Pacient {
 protected:
-    string name; 
+    string name;
     string surname;
     string patername;
     bool sex;
@@ -23,12 +23,12 @@ protected:
     string complaints;
     string allergic_history;
 public:
-    Pacient():name(""),surname(""),patername(""),sex(0),birth_date(""),telephone_number(""),adress(""),diagnosis(""),complaints(""),allergic_history(""){}
-    Pacient (string name,string surname, string patername, bool sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints,string allergic_history)
+    Pacient() :name(""), surname(""), patername(""), sex(0), birth_date(""), telephone_number(""), adress(""), diagnosis(""), complaints(""), allergic_history("") {}
+    Pacient(string name, string surname, string patername, bool sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints, string allergic_history)
     {
         Init(name, surname, patername, sex, birth_date, telephone_number, adress, diagnosis, complaints, allergic_history);
     }
-    void Init(string name, string surname, string patername, bool sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints,string allergic_history) {
+    void Init(string name, string surname, string patername, bool sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints, string allergic_history) {
         SetName(name);
         SetSurName(surname);
         SetPaterName(patername);
@@ -40,6 +40,7 @@ public:
         SetComplaints(complaints);
         SetAllergic_history(allergic_history);
     }
+  
     bool SetName(string name) { this->name = name; return 1; }
     bool SetSurName(string surname) { this->surname = surname; return 1; }
     bool SetPaterName(string patername) { this->patername = patername; return 1; }
@@ -66,17 +67,51 @@ class Menu {
 public:
 
     void Start() {
-        cout << "Âàñ â³òàº ìåíþ ïðîãðàìè DentalClinic " << endl;
-        cout << "Îñü ä³¿, ùî Âè ìîæåòå ðîáèòè. Âèáåð³òü îäíó ç ïåðåë³êó: \n";
-        cout << "1-Äîäàòè íîâîãî ïàö³ºíòà;\n";
-        cout << "2-Âèäàëèòè ïàö³ºíòà;\n";
-        cout << "3-Ïåðåãëÿíóòè ñïèñîê ïàö³ºíò³â;\n";
-       // cout << "4-Çáåðåãòè ³íôîðìàö³þ;\n";
-     //   cout << "4-Çàâàíòàæèòè ³íôîðìàö³þ;\n";
-        cout << "4-Ïîøóê ïàö³ºíòà;\n";
-        }
+        int a=0;
+        cout << "Ð’Ð°Ñ Ð²Ñ–Ñ‚Ð°Ñ” Ð¼ÐµÐ½ÑŽ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¸ DentalClinic " << endl;
+        cout << "ÐžÑÑŒ Ð´Ñ–Ñ—, Ñ‰Ð¾ Ð’Ð¸ Ð¼Ð¾Ð¶ÐµÑ‚Ðµ Ñ€Ð¾Ð±Ð¸Ñ‚Ð¸. Ð’Ð¸Ð±ÐµÑ€Ñ–Ñ‚ÑŒ Ð¾Ð´Ð½Ñƒ Ð· Ð¿ÐµÑ€ÐµÐ»Ñ–ÐºÑƒ: \n";
+        cout << "1-Ð”Ð¾Ð´Ð°Ñ‚Ð¸ Ð½Ð¾Ð²Ð¾Ð³Ð¾ Ð¿Ð°Ñ†Ñ–Ñ”Ð½Ñ‚Ð°;\n";
+        cout << "2-Ð’Ð¸Ð´Ð°Ð»Ð¸Ñ‚Ð¸ Ð¿Ð°Ñ†Ñ–Ñ”Ð½Ñ‚Ð°;\n";
+        cout << "3-ÐŸÐµÑ€ÐµÐ³Ð»ÑÐ½ÑƒÑ‚Ð¸ ÑÐ¿Ð¸ÑÐ¾Ðº Ð¿Ð°Ñ†Ñ–Ñ”Ð½Ñ‚Ñ–Ð²;\n";
+       // cout << "4-Ð—Ð±ÐµÑ€ÐµÐ³Ñ‚Ð¸ Ñ–Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ñ–ÑŽ;\n";
+       // cout << "5-Ð—Ð°Ð²Ð°Ð½Ñ‚Ð°Ð¶Ð¸Ñ‚Ð¸ Ñ–Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ñ–ÑŽ;\n";
+        cout << "4-ÐŸÐ¾ÑˆÑƒÐº Ð¿Ð°Ñ†Ñ–Ñ”Ð½Ñ‚Ð°;\n";             // ÐžÑ‚Ñ€Ð¸Ð¼ÑƒÑ”Ð¼Ð¾ Ð²ÐµÐºÑ‚Ð¾Ñ€ Ð¿Ð°Ñ†Ñ–Ñ”Ð½Ñ‚Ñ–Ð² Ñ– ÑˆÑƒÐºÐ°Ñ”Ð¼Ð¾ Ð² Ð½ÑŒÐ¾Ð¼Ñƒ 
+        cout << "5-Ð ÐµÐ´Ð°Ð³ÑƒÐ²Ð°Ñ‚Ð¸ Ñ–Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ñ–ÑŽ Ð¿Ñ€Ð¾ Ð¿Ð°Ñ†Ñ–Ñ”Ð½Ñ‚Ð°;\n";
+        cout << "6-Ð’Ð¸Ñ…Ñ–Ð´;\n";
+        cin >> a;
+        switch (a) {
+        case 1:
 
+            break;
+        case 2:
 
+            break;
+        case 3:
+
+            break;
+        case 4:
+
+            break;
+        case 5:
+
+            break;
+        case 6:
+            
+            break;
+        default: {
+            cout << "Enter correct value" << endl;
+            throw "Ð’Ð²ÐµÐ´Ñ–Ñ‚ÑŒ ÐºÐ¾Ñ€ÐµÐºÑ‚Ð½Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð½Ñ (Ð²Ñ–Ð´ 1 Ð´Ð¾ 6)"; }
+    }
+
+    }
+
+};
+
+class Card {
+private:
+    fstream file;
+public:
+    
 
 };
 
@@ -84,14 +119,33 @@ int main()
 {
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
-   // ñïî÷àòêó ³ì'ÿ ïîò³ì ïð³çâèùå, ñïî÷àòêó ñêàðãè, ïîò³ì ä³àãíîç
+
+    /*
+  
     Pacient a;
-    a.Init("Ñòåïàí","Ëåãêèé","Éîñèôîâè÷",0,"26.06.1995","+380975410329","ì.²âàíî-Ôðàíê³âñüê, âóë.Âîâ÷èíåöüêà 30, 12","Ãîñòðèé ïóëüï³ò 45 ","Íåñòåðïíèé á³ëü â íèæíüîìó ïðàâîìó çóá³ ","Àëåðãîëîã³÷íèé àíàìíåç íå îáòÿæåíèé") ;
-    cout << a.GetName() << "\n" << a.GetSurName() << "\n" << a.GetPaterName() << "\n"<<a.GetSex()<<"\n"<<a.GetBirthDate()<<"\n"<< a.GetTelephone_number()<<"\n"<<a.GetAdress()<<"\n"<<a.GetDiagnosis()<<"\n"<<a.GetComplaints()<<"\n"<<a.GetAllergic_history()<<"\n";
+    a.Init("Ð›ÐµÐ³ÐºÐ¸Ð¹", "Ð¡Ñ‚ÐµÐ¿Ð°Ð½", "Ð™Ð¾ÑÐ¸Ñ„Ð¾Ð²Ð¸Ñ‡", 0, "26.06.1995", "+380975410329", "Ð¼.Ð†Ð²Ð°Ð½Ð¾-Ð¤Ñ€Ð°Ð½ÐºÑ–Ð²ÑÑŒÐº, Ð²ÑƒÐ».Ð’Ð¾Ð²Ñ‡Ð¸Ð½ÐµÑ†ÑŒÐºÐ° 30, 12", "Ð“Ð¾ÑÑ‚Ñ€Ð¸Ð¹ Ð¿ÑƒÐ»ÑŒÐ¿Ñ–Ñ‚ 45 ", "ÐÐµÑÑ‚ÐµÑ€Ð¿Ð½Ð¸Ð¹ Ð±Ñ–Ð»ÑŒ", "ÐÐ»ÐµÑ€Ð³Ð¾Ð»Ð¾Ð³Ñ–Ñ‡Ð½Ð¸Ð¹ Ð´Ñ–Ð°Ð³Ð½Ð¾Ð· Ð½ÐµÐ¾Ð±Ñ‚ÑÐ¶ÐµÐ½Ð¸Ð¹");
+
+
+   //
+   cout << a.GetName() << "\n" << a.GetSurName() << "\n" << a.GetPaterName() << "\n" << a.GetSex() << "\n" << a.GetBirthDate() << "\n" << a.GetTelephone_number() << "\n" << a.GetAdress() << "\n" << a.GetDiagnosis() << "\n" << a.GetComplaints() << "\n" << a.GetAllergic_history() << "\n";
+
+   */
+    Pacient a("Ð›ÐµÐ³ÐºÐ¸Ð¹", "Ð¡Ñ‚ÐµÐ¿Ð°Ð½", "Ð™Ð¾ÑÐ¸Ñ„Ð¾Ð²Ð¸Ñ‡", 0, "26.06.1995", "+380975410329", "Ð¼.Ð†Ð²Ð°Ð½Ð¾-Ð¤Ñ€Ð°Ð½ÐºÑ–Ð²ÑÑŒÐº, Ð²ÑƒÐ».Ð’Ð¾Ð²Ñ‡Ð¸Ð½ÐµÑ†ÑŒÐºÐ° 30, 12", "Ð“Ð¾ÑÑ‚Ñ€Ð¸Ð¹ Ð¿ÑƒÐ»ÑŒÐ¿Ñ–Ñ‚ 45 ", "ÐÐµÑÑ‚ÐµÑ€Ð¿Ð½Ð¸Ð¹ Ð±Ñ–Ð»ÑŒ", "ÐÐ»ÐµÑ€Ð³Ð¾Ð»Ð¾Ð³Ñ–Ñ‡Ð½Ð¸Ð¹ Ð´Ñ–Ð°Ð³Ð½Ð¾Ð· Ð½ÐµÐ¾Ð±Ñ‚ÑÐ¶ÐµÐ½Ð¸Ð¹");
+    Pacient n("L", "S", "Y", 0, "25.12.2013", "00256898546", "Ivano", "Oskdo", "Pain", "Non");
+    Menu g;
+        while (1) {
+            g.Start();
+        }
+    
+  
+
+
+
+
+
 
 
 
 
     return 0;
 }
-
