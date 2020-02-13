@@ -40,19 +40,19 @@ class View
 {
 public:
 
-	static void NewPage(CheckList& cl) { 
+	static void NewPage(CheckList& cl) {
 		system("cls");
 
 		std::cout << "\t" << cl.Header << "\t\n";
 		for (Fields& fild : cl.fields)
-			
+
 		{
 			std::cout << " " << fild.GetText();
 
 			if (fild.Inputable()) {
 				std::cout << " ";
 				std::string buff;
-				getline(cin,buff);
+				getline(cin, buff);
 				fild.SetAns(buff);
 			}
 			else
@@ -65,7 +65,7 @@ public:
 
 			std::cout << " ";
 			std::string buff;
-			getline(cin,buff);
+			getline(cin, buff);
 			cl.Footer.SetAns(buff);
 
 		}
@@ -83,7 +83,7 @@ protected:
 	string name;
 	string surname;
 	string patername;
-	bool sex;
+	string sex;
 	string birth_date;
 	string telephone_number;
 	string adress;
@@ -91,12 +91,13 @@ protected:
 	string complaints;
 	string allergic_history;
 public:
-	Pacient() :name(""), surname(""), patername(""), sex(0), birth_date(""), telephone_number(""), adress(""), diagnosis(""), complaints(""), allergic_history("") {}
-	Pacient(string name, string surname, string patername, bool sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints, string allergic_history)
+	
+	Pacient() :name(""), surname(""), patername(""), sex(""), birth_date(""), telephone_number(""), adress(""), diagnosis(""), complaints(""), allergic_history("") {}
+	Pacient(string name, string surname, string patername, string sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints, string allergic_history)
 	{
 		Init(name, surname, patername, sex, birth_date, telephone_number, adress, diagnosis, complaints, allergic_history);
 	}
-	void Init(string name, string surname, string patername, bool sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints, string allergic_history) {
+	void Init(string name, string surname, string patername, string sex, string birth_date, string telephone_number, string adress, string diagnosis, string complaints, string allergic_history) {
 		SetName(name);
 		SetSurName(surname);
 		SetPaterName(patername);
@@ -111,7 +112,7 @@ public:
 	bool SetName(string name) { this->name = name; return 1; }
 	bool SetSurName(string surname) { this->surname = surname; return 1; }
 	bool SetPaterName(string patername) { this->patername = patername; return 1; }
-	bool SetSex(bool sex) { this->sex = sex; return 1; }
+	bool SetSex(string sex) { this->sex = sex; return 1; }
 	bool SetBirthDate(string birth_date) { this->birth_date = birth_date; return 1; }
 	bool SetTelephone_number(string telephone_number) { this->telephone_number = telephone_number; return 1; }
 	bool SetAdress(string adress) { this->adress = adress; return 1; }
@@ -121,7 +122,7 @@ public:
 	string GetName() { return name; }
 	string GetSurName() { return surname; }
 	string GetPaterName() { return patername; }
-	bool GetSex() { return sex; }
+	string GetSex() { return sex; }
 	string GetBirthDate() { return birth_date; }
 	string GetTelephone_number() { return telephone_number; }
 	string GetAdress() { return adress; }
@@ -130,21 +131,82 @@ public:
 	string GetAllergic_history() { return allergic_history; }
 };
 
+class SaveLoadSearchFiles {
+
+
+protected:
+
+	//	Pacient pacient;
+	string PacientNameSurname;
+
+	static bool FileExist(string name) {
+		fstream file;
+
+		file.open("C:\\Users\\admin\\source\\repos\\ConsoleApplication2\\ConsoleApplication2\\Pacient Base\\" + name + ".bin", fstream::in);
+		if (!file.is_open())
+			return 0;
+
+		file.close();
+		return 1;
+	}
+
+public:
+
+
+	/*SaveLoadSearchFiles(Pacient pacient)
+	{
+		SetPacient(pacient);
+		PacientNameSurname = pacient.GetName() + "_" + pacient.GetSurName() + ".bin";
+	}
+	*/
+
+	static void Save(Pacient* obj) {
+		fstream file;
+		file.open("C:\\Users\\Stepan.Lehkyi\\source\\repos\\Pacient managment\\Pacient managment\\Pacient Base\\" + obj->GetName() + "_" + obj->GetSurName() + ".bin", ios::out);
+		file.write((const char*)&obj, sizeof(obj));
+		file.close();
+	}
+
+	static void Load(Pacient* obj, string name) {
+		ifstream file;
+		file.open("C:\\Users\\Stepan.Lehkyi\\source\\repos\\Pacient managment\\Pacient managment\\Pacient Base\\" + name + ".bin", ios::binary);
+		if (file.is_open()) {
+			cout << "file is open\n";
+		}
+		file.read((char*)&(*obj), sizeof(Pacient));
+		file.close();
+
+	}
+
+
+
+};
+
 class Program {
+private:
+
+	bool KeyIsEqualToVal(string key, vector<string> values) {
+		for (auto val : values) {
+			if (key == val)
+				return 1;
+		}
+		return 0;
+	}
+
 protected:
 	map<string, CheckList> page;
 public:
 
 	void Init() {
 		page["main menu"] = CheckList{
-		  "Here is menu of DentalClinic.\n\tWhat do you want to do?: \n",
+			"Here is menu of DentalClinic.\n\tWhat do you want to do?: \n",
 		{
-		Fields("1-Add new pacient;\n"),
-		Fields("2-Remove pacient;\n"),
-		Fields("3-Show all pacients;\n"),
-		Fields("4-Search pacient;\n"),
-		Fields("5-Edit information about patient; \n"),
-		Fields("6-Exit\n")
+			Fields("1-Add new pacient;\n"),
+			Fields("2-Remove pacient;\n"),
+			Fields("3-Show all pacients;\n"),
+			Fields("4-Search pacient;\n"),
+			Fields("5-Edit information about patient; \n"),
+			Fields("6-Exit\n")
 		},
 			Fields("->", 1)
 		};
@@ -154,7 +216,7 @@ public:
 			Fields("1.Name:\t",1),
 			Fields("2.Surname:\t",1),
 			Fields("3.Patername:\t",1),
-			Fields("4.Sex:\t",1),
+			Fields("4.Sex(male/female):\t",1),
 			Fields("5.Birth date:\t",1),
 			Fields("6.Telephone number:\t",1),
 			Fields("7.Adress:\t",1),
@@ -190,7 +252,7 @@ public:
 			Fields("1.Search by name\t"),
 			Fields("2.Search by surname\t"),
 			Fields("3.Search by telephone number\t"),
-			Fields("4.Seearch by diagnosis\t"),
+			Fields("4.Search by diagnosis\t"),
 			Fields("5.Back to main menu\t")
 		},
 			Fields("\n->", 1)
@@ -198,7 +260,7 @@ public:
 		page["Exit page"] = CheckList{
 			"",
 		{},
-			Fields("Are you sure You want to exit?\t->(y/n)", 1)
+		Fields("Are you sure You want to exit?\t->(y/n)", 1)
 		};
 
 	}
@@ -206,19 +268,32 @@ public:
 
 	void AddPatient() {//adds a new Patient
 		View::NewPage(page["Add menu"]);
-
+		Pacient buff;
+		buff.SetName(page["Add menu"].fields[0].GetAns());
+		buff.SetSurName(page["Add menu"].fields[1].GetAns());
+		buff.SetPaterName(page["Add menu"].fields[2].GetAns());
+		buff.SetSex(page["Add menu"].fields[3].GetAns());
+		buff.SetBirthDate(page["Add menu"].fields[4].GetAns());
+		buff.SetTelephone_number(page["Add menu"].fields[5].GetAns());
+		buff.SetAdress(page["Add menu"].fields[6].GetAns());
+		buff.SetDiagnosis(page["Add menu"].fields[7].GetAns());
+		buff.SetComplaints(page["Add menu"].fields[8].GetAns());
+		buff.SetAllergic_history(page["Add menu"].fields[9].GetAns());
+		SaveLoadSearchFiles::Save(&buff);
+		
 	}
 
 	void RemovePatient() { //creates a new page
 		View::NewPage(page["Remove menu"]);
 
+
 	}
 	void ShowAllPatient() {
 		//Load from file
 	}
-	void SearchPatient() { 
+	void SearchPatient() {
 		View::NewPage(page["Search menu"]);
-	
+
 	}
 	void EditPatient() {
 		View::NewPage(page["Edit menu"]);
@@ -226,81 +301,76 @@ public:
 	}
 	void ExitPage() {
 		View::NewPage(page["Exit page"]);
-		
-			
 
 	}
-
 	void Start() {
 		while (1) {
 			auto& thisPage = page["main menu"];
 			View::NewPage(thisPage);
-			
-			if (page["main menu"].Footer.GetAns() == "1"|| page["main menu"].Footer.GetAns() == "Add"|| page["main menu"].Footer.GetAns() == "add"|| page["main menu"].Footer.GetAns() == "new") {
+			string answer = page["main menu"].Footer.GetAns();
+			if (KeyIsEqualToVal(answer, { "1","Add","add","new" })) {
 				AddPatient();
-				
 			}
-			else if (page["main menu"].Footer.GetAns() == "2"|| page["main menu"].Footer.GetAns() == "rm"|| page["main menu"].Footer.GetAns() == "remove"||page["main menu"].Footer.GetAns() == "Remove") {
+			else if (KeyIsEqualToVal(answer, { "2" ,"rm" ,"remove" ,"Remove" })) {
 				RemovePatient();
-				
+
 			}
-			else if (page["main menu"].Footer.GetAns() == "3"|| page["main menu"].Footer.GetAns() == "show"|| page["main menu"].Footer.GetAns() == "Show"|| page["main menu"].Footer.GetAns() == "All"|| page["main menu"].Footer.GetAns() == "all") {
+			else if (KeyIsEqualToVal(answer, { "3", "show","Show","All","all" })) {
 				ShowAllPatient();
-				
+
 			}
-			else if (page["main menu"].Footer.GetAns() == "4"|| page["main menu"].Footer.GetAns() == "search"|| page["main menu"].Footer.GetAns() == "search patient"|| page["main menu"].Footer.GetAns() == "Search") {
+			else if (KeyIsEqualToVal(answer, { "4","search","search patient","Search" })) {
 				SearchPatient();
 				while (1) {
-					if (page["Search menu"].Footer.GetAns() == "1" || page["Search menu"].Footer.GetAns() == "Search by name" || page["Search menu"].Footer.GetAns() == "by name" || page["Search menu"].Footer.GetAns() == "1.Search by name" || page["Search menu"].Footer.GetAns() == "name") {
+					if (KeyIsEqualToVal(answer, { "1","Search by name","by name","1.Search by name","name" })) {
 						cout << "Search by name" << endl;
 						system("pause");
 						break;
 					}
-					else if (page["Search menu"].Footer.GetAns() == "2" || page["Search menu"].Footer.GetAns() == "Search by surname" || page["Search menu"].Footer.GetAns() == "by surname" || page["Search menu"].Footer.GetAns() == "1.Search by surname" || page["Search menu"].Footer.GetAns() == "surname") {
+					else if (KeyIsEqualToVal(answer, { "2","Search by surname","by surname","1.Search by surname","surname" })) {
 						cout << "Search by surname" << endl;
 						system("pause");
 						break;
 					}
-					else if (page["Search menu"].Footer.GetAns() == "3" || page["Search menu"].Footer.GetAns() == "Search by telephone number" || page["Search menu"].Footer.GetAns() == "by tel num" || page["Search menu"].Footer.GetAns() == "3.Search" || page["Search menu"].Footer.GetAns() == "number") {
+					else if (KeyIsEqualToVal(answer, { "3","Search by telephone number","by tel num","3.Search","number" })) {
 						cout << "Search by telephone number" << endl;
 						system("pause");
 						break;
 					}
-					else if (page["Search menu"].Footer.GetAns() == "4" || page["Search menu"].Footer.GetAns() == "by diagnosis" || page["Search menu"].Footer.GetAns() == "4.Search" || page["Search menu"].Footer.GetAns() == "4.Search by diagnisis" || page["Search menu"].Footer.GetAns() == "diagnosis") {
+					else if (KeyIsEqualToVal(answer, { "4","by diagnosis","4.Search","4.Search by diagnisis","diagnosis" })) {
 						cout << "Search by diagnosis" << endl;
 						system("pause");
 						break;
 					}
-					else if (page["Search menu"].Footer.GetAns() == "5" || page["Search menu"].Footer.GetAns() == "back" || page["Search menu"].Footer.GetAns() == "5.Back" || page["Search menu"].Footer.GetAns() == "exit") {
+					else if (KeyIsEqualToVal(answer, { "5","back","5.Back","exit" })) {
 						break;
 					}
 					else {
-						
+
 						cout << "Please, enter a correct value" << endl;
 						system("pause");
 						SearchPatient();
-						
-						
+
 					}
 				}
-				
+
 			}
-			else if (page["main menu"].Footer.GetAns() == "5"|| page["main menu"].Footer.GetAns() == "Edit"|| page["main menu"].Footer.GetAns() == "edit"|| page["main menu"].Footer.GetAns() == "edit patient") {
+			else if (KeyIsEqualToVal(answer, { "5","Edit","edit","edit patient" })) {
 				EditPatient();
 				while (1) {
 
 				}
-				
+
 			}
-			else if (page["main menu"].Footer.GetAns() == "6"|| page["main menu"].Footer.GetAns() == "exit"|| page["main menu"].Footer.GetAns() == "Exit") {
+			else if (KeyIsEqualToVal(answer, { "6","exit","Exit" })) {
 				ExitPage();
 				if (page["Exit page"].Footer.GetAns() == "y")
-				break;
+					break;
 			}
 			else {
 				cout << "Choose a correct value\n";
 				system("pause");
-				
+
 			}
 		}
 
@@ -309,8 +379,6 @@ public:
 
 
 };
-
-
 
 int main()
 {
@@ -321,6 +389,14 @@ int main()
 	menu.Init();
 	menu.Start();
 	
+	/*
+	Pacient ab("Lehky", "Stepan", "Yosyfovich", 0, "26/06/1995", "+380975410329", "Ivano_Franliwsk", "Acute ", "Pain", "none");
+	Pacient a("Lehkyi", "Stepan", "Yosyfovich", 0, "26/06/1995", "+380975410329", "Ivano_Franliwsk", "Acute ", "Pain", "none");
+	Pacient h("BAN", "Ivan", "Ivanovich", 0, "13/12/1999", "+380975410329", "Ivano_Frankiw'sk", "Acute pulpitis", "Pain", "Alergic reaction on penicelinum");
+	SaveLoadSearchFiles::Load(&h,"KABAN_Ivan");
+
+	cout << h.GetName() << " " << h.GetSurName() << endl;
+	*/
 
 
 	return 0;
