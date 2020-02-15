@@ -7,6 +7,7 @@ This program is created for easy dental managment.
 #include <string>
 #include <vector>
 #include <map>
+#include <sstream>
 using namespace std;
 
 class Fields {
@@ -173,7 +174,7 @@ protected:
 public:
 
 	static void Save(Pacient obj) {
-		ofstream out("C:\\Users\\STEPAN\\Desktop\\Pacient managment\\Pacient managment\\Pacient Base\\"+obj.GetName()+"_"+obj.GetSurName()+".bin");
+		ofstream out("C:\\Users\\STEPAN\\Desktop\\Pacient managment\\Pacient managment\\Pacient Base\\"+obj.GetName()+"_"+obj.GetSurName()+".bin",ios::binary);
 		out << obj;
 		out.close();
 	}
@@ -456,10 +457,6 @@ int main()
 	Program menu;
 	menu.Init();
 	menu.Start();
-
-
-
-	
-	
+	ostringstream ss;
 	return 0;
 }
