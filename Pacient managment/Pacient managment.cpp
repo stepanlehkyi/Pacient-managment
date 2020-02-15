@@ -249,11 +249,10 @@ public:
 		page["Search menu"] = CheckList{
 			"Here is menu for pacient search. Choose a value, you want to search by:\n",
 		{
-			Fields("1.Search by name\t"),
-			Fields("2.Search by surname\t"),
-			Fields("3.Search by telephone number\t"),
-			Fields("4.Search by diagnosis\t"),
-			Fields("5.Back to main menu\t")
+			Fields("1.Search by surname\t"),
+			Fields("2.Search by telephone number\t"),
+			Fields("3.Search by diagnosis\t"),
+			Fields("4.Back to main menu\t")
 		},
 			Fields("\nEnter by what value you want to search->", 1)
 		};
@@ -353,27 +352,19 @@ public:
 		while (1) {
 			auto& thisPage = page["Search menu"];
 			string answer = page["Search menu"].Footer.GetAns();
-			if (KeyIsEqualToVal(answer, { "1","Search by name","by name","1.Search by name","name" })) {
-				cout << "Search by name" << endl;
-				system("pause");
+			if (KeyIsEqualToVal(answer, { "1","Search by surname","by surname","1.Search by surname","surname" })) {
+				View::NewPage(page["Search by surname menu"]);
 				break;
 			}
-			else if (KeyIsEqualToVal(answer, { "2","Search by surname","by surname","1.Search by surname","surname" })) {
-				cout << "Search by surname" << endl;
-				system("pause");
+			else if (KeyIsEqualToVal(answer, { "2","Search by telephone number","by tel num","number" })) {
+				View::NewPage(page["Search by telephone number menu"]);
 				break;
 			}
-			else if (KeyIsEqualToVal(answer, { "3","Search by telephone number","by tel num","3.Search","number" })) {
-				cout << "Search by telephone number" << endl;
-				system("pause");
+			else if (KeyIsEqualToVal(answer, { "3","by diagnosis","3.Search","3.Search by diagnisis","diagnosis" })) {
+				View::NewPage(page["Search by diagnosis menu"]);
 				break;
 			}
-			else if (KeyIsEqualToVal(answer, { "4","by diagnosis","4.Search","4.Search by diagnisis","diagnosis" })) {
-				cout << "Search by diagnosis" << endl;
-				system("pause");
-				break;
-			}
-			else if (KeyIsEqualToVal(answer, { "5","back","5.Back","exit" })) {
+			else if (KeyIsEqualToVal(answer, { "4","back","4.Back","exit" })) {
 				break;
 			}
 			else {
