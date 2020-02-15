@@ -1,4 +1,4 @@
-﻿/*                  DentalClinic
+/*                  DentalClinic
 This program is created for easy dental managment.
 */
 
@@ -6,8 +6,6 @@ This program is created for easy dental managment.
 #include <fstream>
 #include <string>
 #include <vector>
-#include <locale>
-#include <windows.h>
 #include <map>
 using namespace std;
 
@@ -119,16 +117,38 @@ public:
 	bool SetDiagnosis(string diagnosis) { this->diagnosis = diagnosis; return 1; }
 	bool SetComplaints(string complaints) { this->complaints = complaints; return 1; }
 	bool SetAllergic_history(string allergic_history) { this->allergic_history = allergic_history; return 1; }
-	string GetName() { return name; }
-	string GetSurName() { return surname; }
-	string GetPaterName() { return patername; }
-	string GetSex() { return sex; }
-	string GetBirthDate() { return birth_date; }
-	string GetTelephone_number() { return telephone_number; }
-	string GetAdress() { return adress; }
-	string GetDiagnosis() { return diagnosis; }
-	string GetComplaints() { return complaints; }
-	string GetAllergic_history() { return allergic_history; }
+	string GetName()const { return name; }
+	string GetSurName()const { return surname; }
+	string GetPaterName()const { return patername; }
+	string GetSex()const { return sex; }
+	string GetBirthDate()const { return birth_date; }
+	string GetTelephone_number()const { return telephone_number; }
+	string GetAdress() const { return adress; }
+	string GetDiagnosis()const { return diagnosis; }
+	string GetComplaints()const { return complaints; }
+	string GetAllergic_history()const { return allergic_history; }
+
+	friend std::ostream& operator << (std::ostream& out, const Pacient& obj)
+	{
+		out << obj.GetName() << "\n" << obj.GetSurName() << "\n"<<obj.GetPaterName()<<"\n"<<obj.GetSex()<<"\n"<<obj.GetBirthDate()<<"\n"<<obj.GetTelephone_number()<<"\n"<<obj.GetAdress()<<"\n"<<obj.GetDiagnosis()<<"\n"<<obj.GetComplaints()<<"\n"<<obj.GetAllergic_history()<< std::endl;
+		return out;
+	}
+	friend std::istream& operator >> (std::istream& in, Pacient& obj)
+	{
+		in >> obj.name;
+		in >> obj.surname;
+		in >> obj.patername;
+		in >> obj.sex;
+		in >> obj.birth_date;
+		in >> obj.telephone_number;
+		in >> obj.adress;
+		in >> obj.diagnosis;
+		in >> obj.complaints;
+		in >> obj.allergic_history;
+
+
+		return in;
+	}
 };
 
 class SaveLoadSearchFiles {
@@ -137,7 +157,7 @@ class SaveLoadSearchFiles {
 protected:
 
 	//	Pacient pacient;
-	string PacientNameSurname;
+
 
 	static bool FileExist(string name) {
 		fstream file;
@@ -152,33 +172,22 @@ protected:
 
 public:
 
-
-	/*SaveLoadSearchFiles(Pacient pacient)
-	{
-		SetPacient(pacient);
-		PacientNameSurname = pacient.GetName() + "_" + pacient.GetSurName() + ".bin";
-	}
-	*/
-
-	static void Save(Pacient* obj) {
-		fstream file;
-		file.open("C:\\Users\\Stepan.Lehkyi\\source\\repos\\Pacient managment\\Pacient managment\\Pacient Base\\" + obj->GetName() + "_" + obj->GetSurName() + ".bin", ios::out);
-		file.write((const char*)&obj, sizeof(obj));
-		file.close();
+	static void Save(Pacient obj) {
+		ofstream out("C:\\Users\\STEPAN\\Desktop\\Pacient managment\\Pacient managment\\Pacient Base\\"+obj.GetName()+"_"+obj.GetSurName()+".bin");
+		out << obj;
+		out.close();
 	}
 
-	static void Load(Pacient* obj, string name) {
-		ifstream file;
-		file.open("C:\\Users\\Stepan.Lehkyi\\source\\repos\\Pacient managment\\Pacient managment\\Pacient Base\\" + name + ".bin", ios::binary);
-		if (file.is_open()) {
-			cout << "file is open\n";
+	static void Load(Pacient& buffObj, string name) {
+		if (FileExist(name))
+		{
+			ifstream in("C:\\Users\\STEPAN\\Desktop\\Pacient managment\\Pacient managment\\Pacient Base\\" + name + ".bin");
+			in >> buffObj;
+			in.close();
 		}
-		file.read((char*)&(*obj), sizeof(Pacient));
-		file.close();
-
+		else
+			cout << "File is already exist" << endl;
 	}
-
-
 
 };
 
@@ -229,12 +238,14 @@ public:
 		page["Remove menu"] = CheckList{
 			"Here is menu for remove pacient. Choose by what you want to delete: \n",
 		{
-			Fields("1.By name\t"),
-			Fields("2.By surname\t"),
-			Fields("3.Back to main menu\t")
+			Fields("1.By surname\t"),
+			Fields("2.By telephone number\t"),
+			Fields("3.By diagnosis\t"),
+			Fields("4.Back to main menu\t")
 		},
 			Fields("\n->", 1)
 		};
+		
 		page["Search menu"] = CheckList{
 			"Here is menu for pacient search. Choose a value, you want to search by:\n",
 		{
@@ -246,14 +257,30 @@ public:
 		},
 			Fields("\nEnter by what value you want to search->", 1)
 		};
+		page["Search by surname menu"] = CheckList{
+			"Search by surname. Enter a surname:\n",
+		{
+			Fields(" ",1)
+		},
+			Fields(" ")
+		};
+		page["Search by telephone number menu"] = CheckList{
+			"Search by telephone number. Enter a number:\n",
+		{Fields("",1)},
+		Fields("")
+		};
+		page["Search by diagnosis menu"] = CheckList{
+			"Search by diagnosis. Enter a diagnosis:\n",
+		{Fields("",1)},
+		Fields("")
+		};
 		page["Edit menu"] = CheckList{
 			"Here is menu for pacient edit. Firstly you should search a patient. Choose by what value, you want to search a pacient: \n",
 		{
-			Fields("1.Search by name\t"),
-			Fields("2.Search by surname\t"),
-			Fields("3.Search by telephone number\t"),
-			Fields("4.Search by diagnosis\t"),
-			Fields("5.Back to main menu\t")
+			Fields("1.Search by surname\t"),
+			Fields("2.Search by telephone number\t"),
+			Fields("3.Search by diagnosis\t"),
+			Fields("4.Back to main menu\t")
 		},
 			Fields("\n->", 1)
 		};
@@ -279,29 +306,114 @@ public:
 		buff.SetDiagnosis(page["Add menu"].fields[7].GetAns());
 		buff.SetComplaints(page["Add menu"].fields[8].GetAns());
 		buff.SetAllergic_history(page["Add menu"].fields[9].GetAns());
-		SaveLoadSearchFiles::Save(&buff);
-		
+		if (KeyIsEqualToVal(page["Add menu"].Footer.GetAns(), { "Y","y","YES","yes" })) 
+		{
+			SaveLoadSearchFiles::Save(buff);
+		}
+
 	}
 
-	void RemovePatient() { //creates a new page
+	void RemovePatient() {
 		View::NewPage(page["Remove menu"]);
+		while (1) {
+			auto& thisPage = page["Remove menu"];
+			string answer = page["Remove menu"].Footer.GetAns();
+			if (KeyIsEqualToVal(answer, { "1","by surname","surname" })) {
+				View::NewPage(page["Search by surname menu"]);
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "2","by tel","number" })) {
+				View::NewPage(page["Search by telephone number menu"]);
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "3","by diagnosis","disgnosis" })) {
+				View::NewPage(page["Search by diagnosis menu"]);
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "4","back","exit" })) {
+				break;
+			}
+			else {
 
+				cout << "Please, enter a correct value" << endl;
+				system("pause");
+				RemovePatient();
+
+			}
+		}
 
 	}
+	
 	void ShowAllPatient() {
-		//Load from file
+	   
+
 	}
 	void SearchPatient() {
 		View::NewPage(page["Search menu"]);
+		while (1) {
+			auto& thisPage = page["Search menu"];
+			string answer = page["Search menu"].Footer.GetAns();
+			if (KeyIsEqualToVal(answer, { "1","Search by name","by name","1.Search by name","name" })) {
+				cout << "Search by name" << endl;
+				system("pause");
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "2","Search by surname","by surname","1.Search by surname","surname" })) {
+				cout << "Search by surname" << endl;
+				system("pause");
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "3","Search by telephone number","by tel num","3.Search","number" })) {
+				cout << "Search by telephone number" << endl;
+				system("pause");
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "4","by diagnosis","4.Search","4.Search by diagnisis","diagnosis" })) {
+				cout << "Search by diagnosis" << endl;
+				system("pause");
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "5","back","5.Back","exit" })) {
+				break;
+			}
+			else {
 
+				cout << "Please, enter a correct value" << endl;
+				system("pause");
+				SearchPatient();
+
+			}
+		}
 	}
 	void EditPatient() {
 		View::NewPage(page["Edit menu"]);
-
+		while (1) {
+			auto& thisPage = page["Edit menu"];
+			string answer = page["Edit menu"].Footer.GetAns();
+			if (KeyIsEqualToVal(answer, { "1","by surname","surname" })) {
+				View::NewPage(page["Search by surname menu"]);
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "2","by tel","number" })) {
+				View::NewPage(page["Search by telephone number menu"]);
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "3","by diagnosis","disgnosis" })) {
+				View::NewPage(page["Search by diagnosis menu"]);
+				break;
+			}
+			else if (KeyIsEqualToVal(answer, { "4","back","exit" })) {
+				break;
+			}
+			else {
+				cout << "Please, enter a correct value" << endl;
+				system("pause");
+				EditPatient();
+			}
+		}
 	}
 	void ExitPage() {
 		View::NewPage(page["Exit page"]);
-
 	}
 	void Start() {
 		while (1) {
@@ -321,45 +433,12 @@ public:
 			}
 			else if (KeyIsEqualToVal(answer, { "4","search","search patient","Search" })) {
 				SearchPatient();
-				while (1) {
-					if (KeyIsEqualToVal(answer, { "1","Search by name","by name","1.Search by name","name" })) {
-						cout << "Search by name" << endl;
-						system("pause");
-						break;
-					}
-					else if (KeyIsEqualToVal(answer, { "2","Search by surname","by surname","1.Search by surname","surname" })) {
-						cout << "Search by surname" << endl;
-						system("pause");
-						break;
-					}
-					else if (KeyIsEqualToVal(answer, { "3","Search by telephone number","by tel num","3.Search","number" })) {
-						cout << "Search by telephone number" << endl;
-						system("pause");
-						break;
-					}
-					else if (KeyIsEqualToVal(answer, { "4","by diagnosis","4.Search","4.Search by diagnisis","diagnosis" })) {
-						cout << "Search by diagnosis" << endl;
-						system("pause");
-						break;
-					}
-					else if (KeyIsEqualToVal(answer, { "5","back","5.Back","exit" })) {
-						break;
-					}
-					else {
-
-						cout << "Please, enter a correct value" << endl;
-						system("pause");
-						SearchPatient();
-
-					}
-				}
+				
 
 			}
 			else if (KeyIsEqualToVal(answer, { "5","Edit","edit","edit patient" })) {
 				EditPatient();
-				while (1) {
-
-				}
+				
 
 			}
 			else if (KeyIsEqualToVal(answer, { "6","exit","Exit" })) {
@@ -382,22 +461,14 @@ public:
 
 int main()
 {
-	SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
 	
 	Program menu;
 	menu.Init();
 	menu.Start();
+
+
+
 	
-	/*
-	Pacient ab("Lehky", "Stepan", "Yosyfovich", 0, "26/06/1995", "+380975410329", "Ivano_Franliwsk", "Acute ", "Pain", "none");
-	Pacient a("Lehkyi", "Stepan", "Yosyfovich", 0, "26/06/1995", "+380975410329", "Ivano_Franliwsk", "Acute ", "Pain", "none");
-	Pacient h("BAN", "Ivan", "Ivanovich", 0, "13/12/1999", "+380975410329", "Ivano_Frankiw'sk", "Acute pulpitis", "Pain", "Alergic reaction on penicelinum");
-	SaveLoadSearchFiles::Load(&h,"KABAN_Ivan");
-
-	cout << h.GetName() << " " << h.GetSurName() << endl;
-	*/
-
-
+	
 	return 0;
 }
